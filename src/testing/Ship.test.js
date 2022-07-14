@@ -1,7 +1,4 @@
-import { 
-  Ship,
-  isSunk
-} from '../scripts/sandbox';
+import { Ship } from '../scripts/Ship';
 
 describe('Ship tests', () => {
 
@@ -23,19 +20,19 @@ describe('Ship tests', () => {
 
   it('checks if boat is sunk', () => {
     expect(smallBoat.sunk).toBe(false);
-  })
+  });
 
   it('boat receives hits', () => {
     expect(bigBoat.hit([0, 1])).toBe(bigBoat.hits);
-  })
+  });
 
   it('gathers info on boat', () => {
     bigBoat.hit([7, 8, 9]);
     expect(bigBoat.getInfoOnBoat()).toBe('big boat, 5,6,7,8,9, 7,8,9, false');
-  })
+  });
 
   it('returns truthy when boat is sunk', () => {
     smallBoat.hit([0, 1, 2]);
     expect(smallBoat.isSunk()).toBe(true);
-  })
-})
+  });
+});
