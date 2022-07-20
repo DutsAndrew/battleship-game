@@ -13,33 +13,41 @@ class Gameboard {
     this.fleetCoordinates = [];
   }
   shipPlacement(typeOfShip, shipCoordinates) {
-    let newShip = new Ship(`${typeOfShip}`, shipCoordinates);
+    const newShip = new Ship(`${typeOfShip}`, shipCoordinates);
     this.shipYard.push(newShip);
     this.fleetCoordinates.push(shipCoordinates);
     return newShip;
   }
   receiveAttack(attack) {
-    let attackResult;
-    if (this.missedAttacks.includes(attack) || this.successfulAttacks.includes(attack)) {
-      attackResult = null;
-      return attackResult;
-    } else if (this.fleetCoordinates.includes(attack)) {
-      this.fleetCoordinates.forEach(array => {
-        array.every((coordinate, index) => {
-          if (coordinate === this.successfulAttacks[index]) {
-            attackResult = 'sunk';
-            this.successfulAttacks.push(attack);
-            return attackResult;
+    if (!attack) return undefined;
+    if (Array.isArray(attack) === false) return undefined;
+
+    // Variables that validate what changes affect the gameboard
+    const missedStatus = checkArrayForMatch(this.missedAttacks);
+    const successStatus = checkArrayForMatch(this.successfulAttacks);
+    const fleetStatus = checkArrayForMatch(this.fleetCoordinates);
+
+    // Function for checking how attack will affect the gameboard
+    function checkArrayForMatch(gameBoardArray) {
+      let status = false;
+      gameBoardArray.forEach(array => {
+        for (let i = 0; i < array.length; i++) {
+          if (attack.includes(array[i])) {
+            status = true;
           }
-        })
-      });
-      attackResult = true;
-      this.successfulAttacks.push(attack);
-      return attackResult;
-    } else if (!this.fleetCoordinates.includes(attack)) {
-      attackResult = false;
+        }
+      })
+      return status;
+    }
+    
+    if (missedStatus === true || (successStatus === true && fleetStatus === true)) {
+      return 'move has already been made';
+    } else if (fleetStatus === false && missedStatus === false) {
       this.missedAttacks.push(attack);
-      return attackResult;
+      return 'miss';
+    } else if (fleetStatus === true && successStatus === false) {
+      this.successfulAttacks.push(attack);
+      return 'hit';
     }
   }
 }
