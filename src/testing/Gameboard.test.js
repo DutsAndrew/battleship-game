@@ -70,7 +70,28 @@ describe('Gameboard tests', () => {
     newBoard.receiveAttack([19]);
     newBoard.receiveAttack([11]);
     expect(newBoard.shipYard[0].hits).toStrictEqual([0]);
-    expect(newBoard.shipYard[1].hits).toStrictEqual([19, 11]);
+    expect(newBoard.shipYard[1].hits).toStrictEqual([11, 19]);
+  })
+
+  it('gameboard returns a sunk status on boat sink', () => {
+    newBoard.shipPlacement('Carrier', [0, 1, 2, 3, 4]);
+    newBoard.shipPlacement('Submarine', [11, 19, 26]);
+    newBoard.receiveAttack([11]);
+    newBoard.receiveAttack([26]);
+    expect(newBoard.receiveAttack([19])).toBe('hit and sunk');
+  })
+
+  it('gameboard returns an all boats have sunk status when all boats have been sunk', () => {
+    newBoard.shipPlacement('Carrier', [0, 1, 2, 3, 4]);
+    newBoard.shipPlacement('Submarine', [11, 19, 26]);
+    newBoard.receiveAttack([11]);
+    newBoard.receiveAttack([26]);
+    newBoard.receiveAttack([0]);
+    newBoard.receiveAttack([1]);
+    newBoard.receiveAttack([2]);
+    newBoard.receiveAttack([4]);
+    expect(newBoard.receiveAttack([19])).toBe('hit and sunk');
+    expect(newBoard.receiveAttack([3])).toBe('all ships have been sunk');
   })
 
 })

@@ -47,25 +47,49 @@ class Gameboard {
       return 'miss';
     } else if (fleetStatus === true && successStatus === false) {
       this.successfulAttacks.push(attack);
-      const sendAttackToBoat = assignHitValueToShip(this.shipYard);
-      // const sunkStatus = checkIfSunk(this.shipYard);
-      return 'hit';
+      const attackStatus = handleAttack(this.shipYard);
+
+      // Upon completion of handleAttack(), if a boat is sunk it goes through handleSink() if not, it is returned.
+      if (typeof attackStatus === 'object' && attackStatus !== null) {
+        const sinkStatus = handleSink(this.sunkShips, attackStatus);
+        return sinkStatus;
+      } else {
+        return attackStatus
+      }
     }
 
-    function assignHitValueToShip(shipYard) {
+    function handleAttack(shipYard) {
       for (const ship in shipYard) {
         for (const shipCoords in shipYard[ship].lengthOfShip) {
           if (attack.includes(shipYard[ship].lengthOfShip[shipCoords])) {
             const convertAttackToNumber = Number(attack);
             shipYard[ship].hits.push(convertAttackToNumber);
-            return shipYard[ship];
+            
+            // After hit is assigned, this part checks for if/when the hit qualifies as a sink.
+            const shipHits = shipYard[ship].hits;
+            const shipLocation = shipYard[ship].lengthOfShip; 
+            if (shipHits.sort().join(',') === shipLocation.sort().join(',')) {
+              const sunkShip = shipYard[ship];
+              sunkShip.sunk = true;
+              return {
+                sunkShip
+              }
+            } else {
+              return 'hit';
+            }
           }
         }
       }
     }
 
-    // function checkIfSunk(shipYard) {
-    //   return shipYard;
-    // }
+    function handleSink(shipGraveyard, ship) {
+      shipGraveyard.push(ship);
+      if (shipGraveyard.length === 2) {
+        return 'all ships have been sunk';
+      }
+      if (shipGraveyard.length !== 5) {
+        return 'hit and sunk';
+      }
+    }
   }
 }
