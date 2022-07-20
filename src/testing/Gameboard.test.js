@@ -35,6 +35,7 @@ describe('Gameboard tests', () => {
 
   it('gameboard rejects non-array objects', () => {
     expect(newBoard.receiveAttack('hello world')).toBe(undefined);
+    expect(newBoard.receiveAttack(9)).toBe(undefined);
   })
 
   it('gameboard can receive hits, if the coordinate is found within the fleet coordinates', () => {
@@ -60,6 +61,16 @@ describe('Gameboard tests', () => {
     expect(newBoard.receiveAttack([19])).toBe('hit');
     expect(newBoard.receiveAttack([50])).toBe('miss');
     expect(newBoard.receiveAttack([0])).toBe('hit');
+  })
+
+  it('gameboard assigns hit values to individual boats', () => {
+    newBoard.shipPlacement('Carrier', [0, 1, 2, 3, 4]);
+    newBoard.shipPlacement('Submarine', [11, 19, 26]);
+    newBoard.receiveAttack([0]);
+    newBoard.receiveAttack([19]);
+    newBoard.receiveAttack([11]);
+    expect(newBoard.shipYard[0].hits).toStrictEqual([0]);
+    expect(newBoard.shipYard[1].hits).toStrictEqual([19, 11]);
   })
 
 })

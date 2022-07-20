@@ -47,7 +47,25 @@ class Gameboard {
       return 'miss';
     } else if (fleetStatus === true && successStatus === false) {
       this.successfulAttacks.push(attack);
+      const sendAttackToBoat = assignHitValueToShip(this.shipYard);
+      // const sunkStatus = checkIfSunk(this.shipYard);
       return 'hit';
     }
+
+    function assignHitValueToShip(shipYard) {
+      for (const ship in shipYard) {
+        for (const shipCoords in shipYard[ship].lengthOfShip) {
+          if (attack.includes(shipYard[ship].lengthOfShip[shipCoords])) {
+            const convertAttackToNumber = Number(attack);
+            shipYard[ship].hits.push(convertAttackToNumber);
+            return shipYard[ship];
+          }
+        }
+      }
+    }
+
+    // function checkIfSunk(shipYard) {
+    //   return shipYard;
+    // }
   }
 }
