@@ -84,7 +84,7 @@ class Gameboard {
 
     function handleSink(shipGraveyard, ship) {
       shipGraveyard.push(ship);
-      if (shipGraveyard.length === 2) {
+      if (shipGraveyard.length === 5) {
         return 'all ships have been sunk';
       }
       if (shipGraveyard.length !== 5) {
