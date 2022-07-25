@@ -1,0 +1,7 @@
+body {
+  background-color: #FFEAEE;
+}
+
+#battleship-logo-favicon {
+  filter: invert(35%) sepia(74%) saturate(5549%) hue-rotate(200deg) brightness(101%) contrast(100%);
+}
