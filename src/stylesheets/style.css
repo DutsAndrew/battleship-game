@@ -5,3 +5,89 @@ body {
 #battleship-logo-favicon {
   filter: invert(35%) sepia(74%) saturate(5549%) hue-rotate(200deg) brightness(101%) contrast(100%);
 }
+
+#header {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0;
+  height: 17vh;
+  width: 100vw;
+  justify-content: space-between;
+  align-items: center;
+  background-color: black;
+}
+
+#battleship-logo {
+  background-color: white;
+  width: 5vw;
+  height: 8vh;
+  margin-left: 1%;
+}
+
+#menu {
+  background-color: pink;
+  width: 20vw;
+  height: 15vh;
+  display: flex;
+  margin: 0;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+}
+
+#website-title {
+  background-color: green;
+  height: 10vh;
+  width: 20vw;
+  margin: 0;
+  font-size: 4.72em;
+}
+
+#menu-button-container {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 5vh;
+  width: 20vw;
+}
+
+#start-game {
+  background-color: orange;
+  height: 5vh;
+  width: 20vw;
+  margin: 0;
+  font-size: 1.25em;
+}
+
+#reset-game {
+  background-color: cyan;
+  height: 5vh;
+  width: 20vw;
+  margin: 0;
+  font-size: 1.25em;
+}
+
+#wins-tracker {
+  background-color: purple;
+  width: 5vw;
+  height: 10vh;
+  margin-right: 1%;
+}
+
+#main-document {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 0;
+  width: 100vw;
+  height: 83vh;
+  background-color: burlywood;
+  justify-content: center;
+  align-items: center;
+}
+
+#gameboard {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0;
+  width: 90vw;
+  height: 70vh;
+  background-color: aquamarine;
+}
