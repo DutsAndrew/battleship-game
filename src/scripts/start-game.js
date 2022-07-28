@@ -1,5 +1,3 @@
-import { doc } from "prettier";
-
 export {
   createGameBoards,
   startGameButton,
@@ -56,6 +54,8 @@ function startGameButton() {
   onlyDisplayPlayerOneBoard();
   addBoatSelectionBox();
   addBoatsToBox();
+  addAxisSwitching();
+  enableDragAndDrop();
 }
 
 function onlyDisplayPlayerOneBoard() {
@@ -74,6 +74,7 @@ function addBoatSelectionBox() {
     labelForPlacingBoat.textContent = 'Place Your Boats Captain!';
   const boatSelectionBox = document.createElement('div');
     boatSelectionBox.setAttribute('id', 'boat-selection-box');
+    boatSelectionBox.classList.add('display-y-axis');
   boatContainer.appendChild(labelForPlacingBoat);
   boatContainer.appendChild(boatSelectionBox);
   gameBoard.appendChild(boatContainer);
@@ -87,7 +88,7 @@ function addBoatsToBox() {
   const carrierIcon = document.createElement('div');
     carrierIcon.setAttribute('id', 'carrier-player');
     carrierIcon.classList.add('player-boat');
-    const carrierHeight = cellHeight * 5 + 7;
+    const carrierHeight = cellHeight * 5 + 8;
     carrierIcon.style.height = `${carrierHeight}px`;
     carrierIcon.style.width = `${cellWidth}px`;
     carrierIcon.draggable = 'true';
@@ -125,6 +126,67 @@ function addBoatsToBox() {
   boatSelectionBox.appendChild(cruiserIcon);
   boatSelectionBox.appendChild(submarineIcon);
   boatSelectionBox.appendChild(destroyerIcon);
+}
+
+function addAxisSwitching() {
+  const main = document.querySelector('#main-document');
+  const axisButton = document.createElement('button');
+    axisButton.setAttribute('id', 'axis-switch');
+    axisButton.classList.add('y-axis');
+    axisButton.textContent = 'Place on Y-Axis';
+  axisButton.addEventListener('click', changeAxis);
+  main.appendChild(axisButton);
+}
+
+function changeAxis() {
+  const axisSwitch = document.querySelector('#axis-switch');
+  const boats = document.querySelectorAll('.player-boat');
+  const boatSelectionBox = document.querySelector('#boat-selection-box');
+  if (axisSwitch.classList.contains('y-axis')) {
+    boats.forEach(boat => {
+      const currentHeight = boat.style.height;
+      const currentWidth = boat.style.width;
+      boat.style.width = currentHeight;
+      boat.style.height = currentWidth;
+    })
+    boatSelectionBox.classList.remove('display-y-axis');
+    boatSelectionBox.classList.add('display-x-axis');
+    axisSwitch.classList.remove('y-axis');
+    axisSwitch.classList.add('x-axis');
+  } else if (axisSwitch.classList.contains('x-axis')) {
+    boats.forEach(boat => {
+      const currentHeight = boat.style.height;
+      const currentWidth = boat.style.width;
+      boat.style.width = currentHeight;
+      boat.style.height = currentWidth;
+    })
+    boatSelectionBox.classList.remove('display-x-axis');
+    boatSelectionBox.classList.add('display-y-axis');
+    axisSwitch.classList.remove('x-axis');
+    axisSwitch.classList.add('y-axis');
+  }
+}
+
+function enableDragAndDrop() {
+  const playerBoats = document.querySelectorAll('.player-boat');
+  const gameBoardCells = document.querySelectorAll('.game-board-cell');
+  playerBoats.forEach(boat => {
+    boat.addEventListener('dragstart', () => {
+      boat.classList.add('dragging');
+      console.log('drag started');
+    })
+    boat.addEventListener('dragend', () => {
+      boat.classList.remove('dragging');
+      console.log('dragend');
+    })
+  })
+  gameBoardCells.forEach(cell => {
+    cell.addEventListener('dragover', () => {
+      console.log(cell);
+      const boat = document.querySelector('.dragging');
+      cell.appendChild(boat);
+    })
+  })
 }
 
 function resetGameButton() {
