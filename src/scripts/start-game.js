@@ -208,11 +208,16 @@ function enableDragAndDrop() {
     })
   })
   gameBoardCells.forEach(cell => {
-    cell.addEventListener('drop', e => {
+    cell.addEventListener('drop', (e) => {
       e.preventDefault();
+      if (cell.classList.contains('boat-drop-active')) {
+        return;
+      }
+      cell.classList.remove('boat-drop-selected');
+      cell.classList.add('boat-drop-active');
       const movedBoat = e.dataTransfer.getData('boat');
       preventDuplicateDrop(movedBoat);
-      console.log(e);
+      console.log(cell);
     })
   })
 }

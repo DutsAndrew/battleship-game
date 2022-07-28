@@ -223,6 +223,11 @@ body {
   background-color: black;
 }
 
+.boat-drop-active {
+  opacity: .5;
+  background-color: yellow;
+}
+
 .boat-has-been-placed {
   background-color: red;
   border: 3px solid yellow;
