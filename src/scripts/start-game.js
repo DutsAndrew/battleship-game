@@ -54,7 +54,7 @@ function startGameButton() {
   onlyDisplayPlayerOneBoard();
   addBoatSelectionBox();
   addBoatsToBox();
-  addAxisSwitching();
+  addAxisSwitch();
   enableDragAndDrop();
 }
 
@@ -128,7 +128,7 @@ function addBoatsToBox() {
   boatSelectionBox.appendChild(destroyerIcon);
 }
 
-function addAxisSwitching() {
+function addAxisSwitch() {
   const main = document.querySelector('#main-document');
   const axisButton = document.createElement('button');
     axisButton.setAttribute('id', 'axis-switch');
@@ -153,6 +153,7 @@ function changeAxis() {
     boatSelectionBox.classList.add('display-x-axis');
     axisSwitch.classList.remove('y-axis');
     axisSwitch.classList.add('x-axis');
+    axisSwitch.textContent = 'Place on X-Axis';
   } else if (axisSwitch.classList.contains('x-axis')) {
     boats.forEach(boat => {
       const currentHeight = boat.style.height;
@@ -164,28 +165,102 @@ function changeAxis() {
     boatSelectionBox.classList.add('display-y-axis');
     axisSwitch.classList.remove('x-axis');
     axisSwitch.classList.add('y-axis');
+    axisSwitch.textContent = 'Place on Y-Axis';
   }
 }
 
 function enableDragAndDrop() {
   const playerBoats = document.querySelectorAll('.player-boat');
   const gameBoardCells = document.querySelectorAll('.game-board-cell');
+  const label = document.querySelector('#label-for-placing-boat');
   playerBoats.forEach(boat => {
-    boat.addEventListener('dragstart', () => {
+    boat.addEventListener('dragstart', e => {
       boat.classList.add('dragging');
-      console.log('drag started');
+      displaySelectedBoat(boat.id);
+      e.dataTransfer.setData('boat', `${boat.id}`);
+      e.dataTransfer.effectAllowed = 'move';
     })
     boat.addEventListener('dragend', () => {
       boat.classList.remove('dragging');
-      console.log('dragend');
+      label.textContent = 'Place your boats Captain';
     })
   })
   gameBoardCells.forEach(cell => {
-    cell.addEventListener('dragover', () => {
-      console.log(cell);
-      const boat = document.querySelector('.dragging');
-      cell.appendChild(boat);
+    cell.addEventListener('dragenter', () => {
+      const boatInDrag = document.querySelector('.dragging').id;
+      cell.classList.add(`${boatInDrag}`);
+      cell.classList.add('boat-drop-selected');
+      cell.addEventListener('click', removeBoatPlacement)
     })
+  })
+  gameBoardCells.forEach(cell => {
+    cell.addEventListener('dragleave', () => {
+      const boatInDrag = document.querySelector('.dragging').id;
+      cell.classList.remove(`${boatInDrag}`);
+      cell.classList.remove('boat-drop-selected');
+      cell.removeEventListener('click', e => removeBoatPlacement(e));
+    })
+  })
+  gameBoardCells.forEach(cell => {
+    cell.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    })
+  })
+  gameBoardCells.forEach(cell => {
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      const movedBoat = e.dataTransfer.getData('boat');
+      preventDuplicateDrop(movedBoat);
+      console.log(e);
+    })
+  })
+}
+
+function getAxisStatus() {
+  const axisSwitch = document.querySelector('#axis-switch');
+  let axisStatus;
+  if (axisSwitch.classList.contains('y-axis')) {
+    axisStatus = 'y';
+    return axisStatus;
+  }
+  if (axisSwitch.classList.contains('x-axis')) {
+    axisStatus = 'x';
+    return axisStatus;
+  }
+}
+
+function displaySelectedBoat(id) {
+  const label = document.querySelector('#label-for-placing-boat');
+  const boatName = id.split('-')[0].toUpperCase()
+  label.textContent = `Placing: ${boatName}`;
+}
+
+function preventDuplicateDrop(boat) {
+  const boatInDOM = document.querySelector(`#${boat}`);
+  boatInDOM.setAttribute('draggable', 'false');
+  boatInDOM.classList.add(`${boatInDOM.id}`);
+  boatInDOM.classList.add('boat-has-been-placed');
+  boatInDOM.addEventListener('click', e => removeBoatPlacement(e));
+}
+
+function removeBoatPlacement(e) {
+  e.preventDefault();
+  const targetEl = e.composedPath()[0].classList[1];
+  const getAllTargetEls = document.querySelectorAll(`.${targetEl}`);
+  
+  getAllTargetEls.forEach(element => {
+    const selectedBoat = document.querySelector(`#${targetEl}`);
+    selectedBoat.setAttribute('draggable', 'true');
+    if (element.classList.contains(`${targetEl}`)) {
+      element.classList.remove(`${targetEl}`);
+    }
+    if (element.classList.contains('boat-drop-selected')) {
+      element.classList.remove('boat-drop-selected');
+    }
+    if (element.classList.contains('boat-has-been-placed')) {
+      element.classList.remove('boat-has-been-placed');
+    }
   })
 }
 
