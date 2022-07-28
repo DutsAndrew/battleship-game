@@ -161,3 +161,36 @@ body {
   display: none;
   visibility: hidden;
 }
+
+/* boat selection styling */
+
+#boat-container {
+  width: 40vw;
+  height: 60vh;
+  background-color: #096B72;
+}
+
+#label-for-placing-boat {
+  background-color: aquamarine;
+  width: 40vw;
+  height: 7vh;
+  margin: 0;
+  font-size: 3em;
+  display: flex;
+  align-items: center;
+  color: azure;
+}
+
+#boat-selection-box {
+  margin: 0;
+  width: 40vw;
+  height: 53vh;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.player-boat {
+  background-color: black;
+}
