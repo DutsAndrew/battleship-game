@@ -218,12 +218,12 @@ body {
   align-items: center;
 }
 
-.boat-drop-selected {
+.boat-drop-selected, .additional-boat-drop-selected {
   opacity: .5;
   background-color: black;
 }
 
-.boat-drop-active {
+.boat-drop-active, .additional-boat-drop-active {
   opacity: .5;
   background-color: yellow;
 }
