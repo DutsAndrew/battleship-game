@@ -30,9 +30,6 @@ function createGameBoardCells(player, playerBoard) {
       const boardCell = document.createElement('div');
       boardCell.classList.add('game-board-cell');
       boardCell.setAttribute('id', `${player}-${cellCount()}`);
-      boardCell.addEventListener('click', () => {
-        console.log(`${boardCell.id}`);
-      })
       boardRow.appendChild(boardCell);
     }
   playerBoard.appendChild(boardRow);
@@ -188,11 +185,6 @@ function enableDragAndDrop() {
       label.textContent = 'Place your boats Captain';
     })
   })
-  // gameBoardCells.forEach(cell => {
-  //   cell.addEventListener('dragenter', () => {
-  //     // guess we aren't doing anything here, huh?
-  //   })
-  // })
   gameBoardCells.forEach(cell => {
     cell.addEventListener('dragleave', () => {
       const boatInDrag = document.querySelector('.dragging').id;
@@ -201,7 +193,7 @@ function enableDragAndDrop() {
       cell.classList.remove('boat-drop-selected');
       cell.parentElement.classList.remove('row-ready-for-placement');
       allSelectedCells.forEach(selectedCell => {
-        selectedCell.classList.remove('additional-boat-drop-selected');
+        selectedCell.classList.remove('additional-boat-drop-selected', `${boatInDrag}`);
         return;
       })
       cell.removeEventListener('click', e => removeBoatPlacement(e));
@@ -213,12 +205,9 @@ function enableDragAndDrop() {
       e.dataTransfer.dropEffect = 'move';
       const boatInDrag = document.querySelector('.dragging').id;
       cell.parentElement.classList.add('row-ready-for-placement');
-      displayFullBoatLength(cell, boatInDrag);
-
-      // have the code below done when calculating the missing cells
       cell.classList.add(`${boatInDrag}`);
       cell.classList.add('boat-drop-selected');
-      cell.addEventListener('click', removeBoatPlacement);
+      displayFullBoatLength(cell, boatInDrag);
     })
   })
   gameBoardCells.forEach(cell => {
@@ -229,10 +218,12 @@ function enableDragAndDrop() {
       }
       cell.classList.remove('boat-drop-selected');
       cell.classList.add('boat-drop-active');
+      cell.addEventListener('click', removeBoatPlacement);
       const allSelectedCells = document.querySelectorAll('.additional-boat-drop-selected');
         allSelectedCells.forEach(selectedCell => {
           selectedCell.classList.remove('additional-boat-drop-selected');
           selectedCell.classList.add('additional-boat-drop-active');
+          selectedCell.addEventListener('click', removeBoatPlacement);
         })
       const movedBoat = e.dataTransfer.getData('boat');
       preventDuplicateDrop(movedBoat);
@@ -260,12 +251,13 @@ function removeBoatPlacement(e) {
   e.preventDefault();
   const targetEl = e.composedPath()[0].classList[1];
   const getAllTargetEls = document.querySelectorAll(`.${targetEl}`);
-  
   getAllTargetEls.forEach(element => {
     const selectedBoat = document.querySelector(`#${targetEl}`);
     selectedBoat.setAttribute('draggable', 'true');
     if (element.classList.contains(`${targetEl}`)) {
       element.classList.remove(`${targetEl}`);
+      element.classList.remove('additional-boat-drop-active');
+      element.removeEventListener('click', removeBoatPlacement);
     }
     if (element.classList.contains('boat-drop-active')) {
       element.classList.remove('boat-drop-active');
@@ -276,11 +268,11 @@ function removeBoatPlacement(e) {
   })
 }
 
-function displayFullBoatLength(cell, boat) {
+function displayFullBoatLength(cell, boatId) {
   const cellNumber = parseInt(cell.id.split('-')[1]);
-  const boatLength = getBoatLength(boat);
+  const boatLength = getBoatLength(boatId);
   const axisStatus = getAxisStatus();
-  calculateMissingCells(axisStatus, cellNumber, boatLength)
+  calculateMissingCells(axisStatus, cellNumber, boatId, boatLength)
 }
 
 function getBoatLength(boat) {
@@ -311,7 +303,7 @@ function getAxisStatus() {
   return axisStatus;
 }
 
-function calculateMissingCells(axisStatus, targetCell, boatSize) {
+function calculateMissingCells(axisStatus, targetCell, boatId, boatSize) {
   const gameBoardCells = document.querySelectorAll('.game-board-cell');
 
   // variables for filling missing cells on y-axis
@@ -333,7 +325,7 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
       gameBoardCells.forEach(cell => {
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneAbove) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
@@ -341,10 +333,10 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
       gameBoardCells.forEach(cell => {
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneAbove) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellOneBelow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
@@ -352,13 +344,13 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
       gameBoardCells.forEach(cell => {
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneAbove) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellTwoAbove) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellOneBelow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
@@ -366,16 +358,16 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
       gameBoardCells.forEach(cell => {
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneAbove) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellTwoAbove) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellOneBelow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellTwoBelow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
@@ -388,7 +380,7 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneToTheRight && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
@@ -397,10 +389,10 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneToTheRight && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellOneToTheLeft && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
@@ -409,13 +401,13 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneToTheRight && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellTwoToTheRight && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellOneToTheLeft && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
@@ -424,16 +416,16 @@ function calculateMissingCells(axisStatus, targetCell, boatSize) {
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
         if (cellId === cellOneToTheRight && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellTwoToTheRight && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellOneToTheLeft && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
         if (cellId === cellTwoToTheLeft && activeRow) {
-          cell.classList.add('additional-boat-drop-selected');
+          cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
     }
