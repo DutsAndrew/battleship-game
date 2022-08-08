@@ -224,11 +224,30 @@ body {
 }
 
 .boat-drop-active, .additional-boat-drop-active {
-  opacity: .5;
-  background-color: yellow;
+  opacity: .9;
 }
 
 .boat-has-been-placed {
   background-color: red;
   border: 3px solid yellow;
+}
+
+.carrier-player {
+  background-color: rgb(88, 88, 134);
+}
+
+.battleship-player {
+  background-color: rgb(177, 33, 182);
+}
+
+.cruiser-player {
+  background-color: rgb(169, 43, 43);
+}
+
+.submarine-player {
+  background-color: rgb(246, 255, 0);
+}
+
+.destroyer-player {
+  background-color: rgb(229, 160, 40);
 }

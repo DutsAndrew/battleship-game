@@ -7,13 +7,13 @@ export {
 function createGameBoards() {
   const gameBoard = document.querySelector('#game-board');
   const playerOneBoard = document.querySelector('#player-one-board');
-  const computerBoard = document.querySelector('#computer-board');
+  // const computerBoard = document.querySelector('#computer-board');
   const createPlayerOneBoard = createGameBoardCells('player', playerOneBoard);
-  const createComputerBoard = createGameBoardCells('computer', computerBoard);
+  // const createComputerBoard = createGameBoardCells('computer', computerBoard);
   gameBoard.classList.add('game-board-hidden');
   return {
     createPlayerOneBoard,
-    createComputerBoard
+    // createComputerBoard
   }  
 }
 
@@ -189,12 +189,15 @@ function enableDragAndDrop() {
     cell.addEventListener('dragleave', () => {
       const boatInDrag = document.querySelector('.dragging').id;
       const allSelectedCells = document.querySelectorAll('.additional-boat-drop-selected');
+      const badDropCells = document.querySelectorAll('.error');
       cell.classList.remove(`${boatInDrag}`);
       cell.classList.remove('boat-drop-selected');
       cell.parentElement.classList.remove('row-ready-for-placement');
       allSelectedCells.forEach(selectedCell => {
         selectedCell.classList.remove('additional-boat-drop-selected', `${boatInDrag}`);
-        return;
+      })
+      badDropCells.forEach(cell => {
+        cell.classList.remove('error');
       })
       cell.removeEventListener('click', e => removeBoatPlacement(e));
     })
@@ -203,30 +206,40 @@ function enableDragAndDrop() {
     cell.addEventListener('dragover', e => {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
+      if (cell.classList.contains('additional-boat-drop-active') || cell.classList.contains('boat-drop-active')) {
+        return;
+      }
       const boatInDrag = document.querySelector('.dragging').id;
-      cell.parentElement.classList.add('row-ready-for-placement');
       cell.classList.add(`${boatInDrag}`);
       cell.classList.add('boat-drop-selected');
+      cell.parentElement.classList.add('row-ready-for-placement');
       displayFullBoatLength(cell, boatInDrag);
     })
   })
   gameBoardCells.forEach(cell => {
     cell.addEventListener('drop', (e) => {
       e.preventDefault();
-      if (cell.classList.contains('boat-drop-active')) {
+      cell.parentElement.classList.remove('row-ready-for-placement');
+      const allSelectedCells = document.querySelectorAll('.additional-boat-drop-selected');
+      const badBoatDrop = document.querySelectorAll('.error');
+      const movedBoat = e.dataTransfer.getData('boat');
+      if (cell.classList.contains('boat-drop-active') || cell.classList.contains('additional-boat-drop-active')) {
         return;
       }
       cell.classList.remove('boat-drop-selected');
       cell.classList.add('boat-drop-active');
       cell.addEventListener('click', removeBoatPlacement);
-      const allSelectedCells = document.querySelectorAll('.additional-boat-drop-selected');
-        allSelectedCells.forEach(selectedCell => {
-          selectedCell.classList.remove('additional-boat-drop-selected');
-          selectedCell.classList.add('additional-boat-drop-active');
-          selectedCell.addEventListener('click', removeBoatPlacement);
-        })
-      const movedBoat = e.dataTransfer.getData('boat');
-      preventDuplicateDrop(movedBoat);
+      allSelectedCells.forEach(selectedCell => {
+        selectedCell.classList.remove('additional-boat-drop-selected');
+        selectedCell.classList.add('additional-boat-drop-active');
+        selectedCell.addEventListener('click', removeBoatPlacement);
+      })
+      if (badBoatDrop.length > 0) {
+        removeBoatOnBadDrop(movedBoat);
+      }
+      if (document.querySelectorAll(`.${movedBoat}`).length > 0) {
+        preventDuplicateDrop(movedBoat);
+      }
     })
   })
 }
@@ -272,7 +285,7 @@ function displayFullBoatLength(cell, boatId) {
   const cellNumber = parseInt(cell.id.split('-')[1]);
   const boatLength = getBoatLength(boatId);
   const axisStatus = getAxisStatus();
-  calculateMissingCells(axisStatus, cellNumber, boatId, boatLength)
+  calculateMissingCells(axisStatus, cellNumber, boatId, boatLength);
 }
 
 function getBoatLength(boat) {
@@ -305,71 +318,118 @@ function getAxisStatus() {
 
 function calculateMissingCells(axisStatus, targetCell, boatId, boatSize) {
   const gameBoardCells = document.querySelectorAll('.game-board-cell');
+  const targetBoatCells = document.querySelectorAll(`.${boatId}`);
 
-  // variables for filling missing cells on y-axis
+  // variables for filling missing cells on x/y-axis
   const cellOneAbove = targetCell - 10;
   const cellTwoAbove = targetCell - 20;
   const cellOneBelow = targetCell + 10;
   const cellTwoBelow = targetCell + 20;
-
-  // variables for filling missing cells on x-axis
   const cellOneToTheRight = targetCell + 1;
   const cellTwoToTheRight = targetCell + 2;
   const cellOneToTheLeft = targetCell - 1;
   const cellTwoToTheLeft = targetCell - 2;
 
+  // variables for storing whether or not a bad drop has been done
+  let cellOneAboveStatus = null;
+  let cellTwoAboveStatus = null;
+  let cellOneBelowStatus = null;
+  let cellTwoBelowStatus = null;
+  let cellOneToTheRightStatus = null;
+  let cellTwoToTheRightStatus = null;
+  let cellOneToTheLeftStatus = null;
+  let cellTwoToTheLeftStatus = null;
+  
   if (axisStatus === 'y') {
 
     // extra cells cannot be less than 0 or more than 100 for y-axis
     if (boatSize === 2) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneAbove) {
+        if (cellId === cellOneAbove && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneAboveStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
+      if (cellOneAboveStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
     if (boatSize === 3) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneAbove) {
+        if (cellId === cellOneAbove && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneAboveStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellOneBelow) {
+        if (cellId === cellOneBelow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneBelowStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
-        }
+        } 
       })
+      if (cellOneAboveStatus === null || cellOneBelowStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
     if (boatSize === 4) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneAbove) {
+        if (cellId === cellOneAbove && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneAboveStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellTwoAbove) {
+        if (cellId === cellTwoAbove && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellTwoAboveStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellOneBelow) {
+        if (cellId === cellOneBelow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneBelowStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
+      if (cellOneAboveStatus === null || cellTwoAboveStatus === null || cellOneBelowStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
     if (boatSize === 5) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneAbove) {
+        if (cellId === cellOneAbove && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneAboveStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellTwoAbove) {
+        if (cellId === cellTwoAbove && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellTwoAboveStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellOneBelow) {
+        if (cellId === cellOneBelow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneBelowStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellTwoBelow) {
+        if (cellId === cellTwoBelow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellTwoBelowStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-      })
+      });
+      if (cellOneAboveStatus === null || cellTwoAboveStatus === null || cellOneBelowStatus === null || cellTwoBelowStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
     
   } else if (axisStatus === 'x') {
@@ -377,58 +437,105 @@ function calculateMissingCells(axisStatus, targetCell, boatId, boatSize) {
     // extra cells cannot go under multiples of 11 or surpass multiples of 10, activeRow variable validates that cells fall under selected row
     if (boatSize === 2) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneToTheRight && activeRow) {
+        if (cellId === cellOneToTheRight && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneToTheRightStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
+      if (cellOneToTheRightStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
     if (boatSize === 3) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneToTheRight && activeRow) {
+        if (cellId === cellOneToTheRight && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneToTheRightStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellOneToTheLeft && activeRow) {
+        if (cellId === cellOneToTheLeft && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneToTheLeftStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
+      if (cellOneToTheRightStatus === null || cellOneToTheLeftStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
     if (boatSize === 4) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneToTheRight && activeRow) {
+        if (cellId === cellOneToTheRight && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneToTheRightStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellTwoToTheRight && activeRow) {
+        if (cellId === cellTwoToTheRight && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellTwoToTheRightStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellOneToTheLeft && activeRow) {
+        if (cellId === cellOneToTheLeft && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneToTheLeftStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
+      if (cellOneToTheRightStatus === null || cellTwoToTheRightStatus === null || cellOneToTheLeftStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
     if (boatSize === 5) {
       gameBoardCells.forEach(cell => {
+        const cellIsAlreadyActive = cell.classList.contains('boat-drop-active');
+        const extraCellIsAlreadyActive = cell.classList.contains('additional-boat-drop-active');
         const activeRow = cell.parentElement.classList.contains('row-ready-for-placement');
         const cellId = Number(cell.id.split('-')[1]);
-        if (cellId === cellOneToTheRight && activeRow) {
+        if (cellId === cellOneToTheRight && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneToTheRightStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellTwoToTheRight && activeRow) {
+        if (cellId === cellTwoToTheRight && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellTwoToTheRightStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellOneToTheLeft && activeRow) {
+        if (cellId === cellOneToTheLeft && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellOneToTheLeftStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
-        if (cellId === cellTwoToTheLeft && activeRow) {
+        if (cellId === cellTwoToTheLeft && activeRow && !cellIsAlreadyActive && !extraCellIsAlreadyActive) {
+          cellTwoToTheRightStatus = true;
           cell.classList.add('additional-boat-drop-selected', `${boatId}`);
         }
       })
+      if (cellOneToTheRightStatus === null || cellTwoToTheRightStatus === null || cellOneToTheLeftStatus === null || cellTwoToTheLeftStatus === null) {
+        targetBoatCells.forEach(cell => {
+          cell.classList.add('error');
+        });
+      }
     }
+  }
+}
+
+function removeBoatOnBadDrop(boatId) {
+  const badDropCells = document.querySelectorAll('.error');
+  if (badDropCells.length > 0) {
+    badDropCells.forEach(cell => {
+      cell.classList.remove('boat-drop-active', 'additional-boat-drop-active', `${boatId}`, 'error');
+    })
   }
 }
 
