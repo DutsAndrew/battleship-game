@@ -251,3 +251,9 @@ body {
 .destroyer-player {
   background-color: rgb(229, 160, 40);
 }
+
+/* STYLING FOR AFTER ALL OF PLAYER ONE'S BOATS HAVE BEEN PLACED */
+.player-one-boat-container-hidden {
+  display: none;
+  visibility: hidden;
+}
