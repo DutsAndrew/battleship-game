@@ -634,7 +634,6 @@ function buildComputerBoats(
     || checkIfArraysShareValue(carrierCoordinates, submarineCoordinates) === 'duplicate coordinate found'
     || checkIfArraysShareValue(carrierCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
     ) {
-      console.log('duplicate exists, attempting to fix');
       carrierCoordinates.forEach((number, index) => {
         if (number % 10 === 0) {
           carrierCoordinates[index] = number -= 1;
@@ -649,7 +648,6 @@ function buildComputerBoats(
     || checkIfArraysShareValue(battleshipCoordinates, submarineCoordinates) === 'duplicate coordinate found'
     || checkIfArraysShareValue(battleshipCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
     ) {
-      console.log('duplicate exists, attempting to fix');
       battleshipCoordinates.forEach((number, index) => {
         if (number % 10 === 0) {
           battleshipCoordinates[index] = number -= 1;
@@ -664,7 +662,6 @@ function buildComputerBoats(
     || checkIfArraysShareValue(cruiserCoordinates, submarineCoordinates) === 'duplicate coordinate found'
     || checkIfArraysShareValue(cruiserCoordinates, destroyerCoordinates) === 'duplicate coordinate found') {
       cruiserCoordinates.forEach((number, index) => {
-        console.log('duplicate exists, attempting to fix');
         if (number % 10 === 0) {
           cruiserCoordinates[index] = number -= 1;
         } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
@@ -678,7 +675,6 @@ function buildComputerBoats(
     || checkIfArraysShareValue(submarineCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
     || checkIfArraysShareValue(submarineCoordinates, destroyerCoordinates) === 'duplicate coordinate found') {
       submarineCoordinates.forEach((number, index) => {
-        console.log('duplicate exists, attempting to fix');
         if (number % 10 === 0) {
           submarineCoordinates[index] = number -= 1;
         } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
@@ -692,7 +688,6 @@ function buildComputerBoats(
     || checkIfArraysShareValue(destroyerCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
     || checkIfArraysShareValue(destroyerCoordinates, submarineCoordinates) === 'duplicate coordinate found') {
       destroyerCoordinates.forEach((number, index) => {
-        console.log('duplicate exists, attempting to fix');
         if (number % 10 === 0) {
           destroyerCoordinates[index] = number -= 1;
         } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
@@ -794,7 +789,25 @@ function checkIfArraysShareValue(array1, array2) {
 }
 
 function placeComputerBoats(carrierCoordinates, battleshipCoordinates, cruiserCoordinates, submarineCoordinates, destroyerCoordinates) {
-  console.log(carrierCoordinates, battleshipCoordinates, cruiserCoordinates, submarineCoordinates, destroyerCoordinates);
+  const computerGameBoardCells = document.querySelectorAll('.computer-game-board-cell');
+  computerGameBoardCells.forEach(cell => {
+    const cellId = Number(cell.id.split('-')[1]);
+    if (carrierCoordinates.includes(cellId)) {
+      cell.classList.add('carrier-computer');
+    }
+    if (battleshipCoordinates.includes(cellId)) {
+      cell.classList.add('battleship-computer');
+    }
+    if (cruiserCoordinates.includes(cellId)) {
+      cell.classList.add('cruiser-computer');
+    }
+    if (submarineCoordinates.includes(cellId)) {
+      cell.classList.add('submarine-computer');
+    }
+    if (destroyerCoordinates.includes(cellId)) {
+      cell.classList.add('destroyer-computer');
+    }
+  })
 }
 
 function getLastDigit(number) {
@@ -803,6 +816,5 @@ function getLastDigit(number) {
 }
 
 function resetGameButton() {
-  console.log('reseting game');
   location.reload();
 }
