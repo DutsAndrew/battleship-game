@@ -232,23 +232,23 @@ body {
   border: 3px solid yellow;
 }
 
-.carrier-player {
+.carrier-player, .carrier-computer {
   background-color: rgb(88, 88, 134);
 }
 
-.battleship-player {
+.battleship-player, .battleship-computer {
   background-color: rgb(177, 33, 182);
 }
 
-.cruiser-player {
+.cruiser-player, .cruiser-computer {
   background-color: rgb(169, 43, 43);
 }
 
-.submarine-player {
+.submarine-player, .submarine-computer {
   background-color: rgb(246, 255, 0);
 }
 
-.destroyer-player {
+.destroyer-player, .destroyer-computer {
   background-color: rgb(229, 160, 40);
 }
 

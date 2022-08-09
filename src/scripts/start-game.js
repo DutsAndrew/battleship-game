@@ -540,7 +540,15 @@ function removeBoatOnBadDrop(boatId) {
 
 function checkIfAllBoatsArePlaced() {
   const amountOfBoatsDropped = document.querySelectorAll('.boat-has-been-placed').length;
+  const boatDropActive = document.querySelectorAll('.boat-drop-active');
+  const additionalBoatDropActive = document.querySelectorAll('.additional-boat-drop-active');
   if (amountOfBoatsDropped === 5) {
+    boatDropActive.forEach(cell => {
+      cell.removeEventListener('click', removeBoatPlacement);
+    })
+    additionalBoatDropActive.forEach(additionalCell => {
+      additionalCell.removeEventListener('click', removeBoatPlacement);
+    })
     buildComputerBoard();
   }
 }
@@ -599,24 +607,101 @@ function generateComputerBoatStartingPoint() {
       computerDestroyerStart = Math.floor(Math.random() * 100);
   }
 
-  buildComputerBoats(computerCarrierStart, computerBattleshipStart, computerCruiserStart, computerSubmarineStart, computerDestroyerStart);
+  buildComputerBoats(
+    computerCarrierStart,
+    computerBattleshipStart,
+    computerCruiserStart,
+    computerSubmarineStart,
+    computerDestroyerStart
+  )
 }
 
-function buildComputerBoats(computerCarrierStart, computerBattleshipStart, computerCruiserStart, computerSubmarineStart, computerDestroyerStart) {
-  const carrierCoordinates = calculateBoatPlacement('carrier', computerCarrierStart);
-  const battleshipCoordinates = calculateBoatPlacement('battleship', computerBattleshipStart);
-  const cruiserCoordinates = calculateBoatPlacement('cruiser', computerCruiserStart);
-  const submarineCoordinates = calculateBoatPlacement('submarine', computerSubmarineStart);
-  const destroyerCoordinates = calculateBoatPlacement('destroyer', computerDestroyerStart);
+function buildComputerBoats(
+  computerCarrierStart,
+  computerBattleshipStart,
+  computerCruiserStart,
+  computerSubmarineStart,
+  computerDestroyerStart
+  ) {
+    let carrierCoordinates = calculateBoatPlacement('carrier', computerCarrierStart);
+    let battleshipCoordinates = calculateBoatPlacement('battleship', computerBattleshipStart);
+    let cruiserCoordinates = calculateBoatPlacement('cruiser', computerCruiserStart);
+    let submarineCoordinates = calculateBoatPlacement('submarine', computerSubmarineStart);
+    let destroyerCoordinates = calculateBoatPlacement('destroyer', computerDestroyerStart);
 
-  // validates that calculated cells are not duplicates
-  const fixedBoats = verifyNoDuplicateCoordinates(carrierCoordinates, battleshipCoordinates, cruiserCoordinates, submarineCoordinates, destroyerCoordinates);
+    while (checkIfArraysShareValue(carrierCoordinates, battleshipCoordinates) === 'duplicate coordinate found' 
+    || checkIfArraysShareValue(carrierCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(carrierCoordinates, submarineCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(carrierCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
+    ) {
+      console.log('duplicate exists, attempting to fix');
+      carrierCoordinates.forEach((number, index) => {
+        if (number % 10 === 0) {
+          carrierCoordinates[index] = number -= 1;
+        } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
+          carrierCoordinates[index] = number += 1;
+        }
+      })
+    }
 
-  if (fixedBoats === 'no bad match') {
-    placeComputerBoats(carrierCoordinates, battleshipCoordinates, cruiserCoordinates, submarineCoordinates, destroyerCoordinates);
-  } else if (fixedBoats !== 'no bad match') {
-    placeComputerBoats(fixedBoats[0], fixedBoats[1], fixedBoats[2], fixedBoats[3], fixedBoats[4]);
-  }
+    while (checkIfArraysShareValue(battleshipCoordinates, carrierCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(battleshipCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(battleshipCoordinates, submarineCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(battleshipCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
+    ) {
+      console.log('duplicate exists, attempting to fix');
+      battleshipCoordinates.forEach((number, index) => {
+        if (number % 10 === 0) {
+          battleshipCoordinates[index] = number -= 1;
+        } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
+          battleshipCoordinates[index] = number += 1;
+        }
+      })
+    }
+
+    while (checkIfArraysShareValue(cruiserCoordinates, carrierCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(cruiserCoordinates, battleshipCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(cruiserCoordinates, submarineCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(cruiserCoordinates, destroyerCoordinates) === 'duplicate coordinate found') {
+      cruiserCoordinates.forEach((number, index) => {
+        console.log('duplicate exists, attempting to fix');
+        if (number % 10 === 0) {
+          cruiserCoordinates[index] = number -= 1;
+        } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
+          cruiserCoordinates[index] = number += 1;
+        }
+      })
+    }
+
+    while (checkIfArraysShareValue(submarineCoordinates, carrierCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(submarineCoordinates, battleshipCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(submarineCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(submarineCoordinates, destroyerCoordinates) === 'duplicate coordinate found') {
+      submarineCoordinates.forEach((number, index) => {
+        console.log('duplicate exists, attempting to fix');
+        if (number % 10 === 0) {
+          submarineCoordinates[index] = number -= 1;
+        } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
+          submarineCoordinates[index] = number += 1;
+        }
+      })
+    }
+
+    while (checkIfArraysShareValue(destroyerCoordinates, carrierCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(destroyerCoordinates, battleshipCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(destroyerCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
+    || checkIfArraysShareValue(destroyerCoordinates, submarineCoordinates) === 'duplicate coordinate found') {
+      destroyerCoordinates.forEach((number, index) => {
+        console.log('duplicate exists, attempting to fix');
+        if (number % 10 === 0) {
+          destroyerCoordinates[index] = number -= 1;
+        } else if (getLastDigit(number) > 0 && number % 10 !== 0) {
+          destroyerCoordinates[index] = number += 1;
+        }
+      })
+    }
+
+  placeComputerBoats(carrierCoordinates, battleshipCoordinates, cruiserCoordinates, submarineCoordinates, destroyerCoordinates);
 }
 
 function calculateBoatPlacement(boatType, boatStart) {
@@ -697,61 +782,6 @@ function calculateBoatPlacement(boatType, boatStart) {
       firstAdditionalCell
     ]
   }
-}
-
-function verifyNoDuplicateCoordinates(
-  carrierCoordinates,
-  battleshipCoordinates,
-  cruiserCoordinates,
-  submarineCoordinates,
-  destroyerCoordinates
-  ) {
-    let fixedCarrier;
-    let fixedBattleship;
-    let fixedCruiser;
-    let fixedSubmarine;
-    let fixedDestroyer;
-    let badMatch = false;
-
-    while (checkIfArraysShareValue(carrierCoordinates, battleshipCoordinates) === 'duplicate coordinate found' 
-    || checkIfArraysShareValue(carrierCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(carrierCoordinates, submarineCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(carrierCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(battleshipCoordinates, carrierCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(battleshipCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(battleshipCoordinates, submarineCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(battleshipCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(cruiserCoordinates, carrierCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(cruiserCoordinates, battleshipCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(cruiserCoordinates, submarineCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(cruiserCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(submarineCoordinates, carrierCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(submarineCoordinates, battleshipCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(submarineCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(submarineCoordinates, destroyerCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(destroyerCoordinates, carrierCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(destroyerCoordinates, battleshipCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(destroyerCoordinates, cruiserCoordinates) === 'duplicate coordinate found'
-    || checkIfArraysShareValue(destroyerCoordinates, submarineCoordinates) === 'duplicate coordinate found') {
-      badMatch = true;
-      fixedCarrier = calculateBoatPlacement('carrier', carrierCoordinates[0]);
-      fixedBattleship = calculateBoatPlacement('battleship', battleshipCoordinates[0]);
-      fixedCruiser = calculateBoatPlacement('cruiser', cruiserCoordinates[0]);
-      fixedSubmarine = calculateBoatPlacement('submarine', submarineCoordinates[0]);
-      fixedDestroyer = calculateBoatPlacement('destroyer', destroyerCoordinates[0]);
-    }
-
-    if (badMatch === false) {
-      return 'no bad match';
-    } else if (badMatch === true) {
-      return [
-        fixedCarrier,
-        fixedBattleship,
-        fixedCruiser,
-        fixedSubmarine,
-        fixedDestroyer
-      ]
-    }
 }
 
 function checkIfArraysShareValue(array1, array2) {
