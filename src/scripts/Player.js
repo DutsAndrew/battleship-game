@@ -2,7 +2,7 @@ export {
   Player
 }
 
-import { Gameboard } from '../scripts/Gameboard';
+import { Gameboard } from './Gameboard';
 
 class Player {
   constructor() {

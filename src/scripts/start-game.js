@@ -4,6 +4,8 @@ export {
   resetGameButton,
 }
 
+import { gameLoop } from './game-loop';
+
 function createGameBoards() {
   const gameBoard = document.querySelector('#game-board');
   const playerOneBoard = document.querySelector('#player-one-board');
@@ -555,7 +557,7 @@ function checkIfAllBoatsArePlaced() {
 
 function buildComputerBoard() {
   const playerOneBoatContainer = document.querySelector('#boat-container');
-    playerOneBoatContainer.classList.add('player-one-boat-container-hidden');
+    playerOneBoatContainer.remove();
   const computerContainer = document.querySelector('#computer-container');
     computerContainer.classList.remove('computer-container-hidden');
   const computerBoard = document.querySelector('#computer-board');
@@ -808,6 +810,9 @@ function placeComputerBoats(carrierCoordinates, battleshipCoordinates, cruiserCo
       cell.classList.add('destroyer-computer');
     }
   })
+
+  // GAME LOOP STARTS HERE 
+  gameLoop();
 }
 
 function getLastDigit(number) {

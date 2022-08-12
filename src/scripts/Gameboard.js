@@ -92,4 +92,46 @@ class Gameboard {
       }
     }
   }
+  addBoatsToBoard(player) {
+    const carrier = document.querySelectorAll(`.carrier-${player}`);
+    const battleship = document.querySelectorAll(`.battleship-${player}`);
+    const cruiser = document.querySelectorAll(`.cruiser-${player}`);
+    const submarine = document.querySelectorAll(`.submarine-${player}`);
+    const destroyer = document.querySelectorAll(`.destroyer-${player}`);
+    
+    let carrierCoordinates = [];
+    carrier.forEach(carrierCell => {
+      const cellId = Number(carrierCell.id.split('-')[1]);
+      carrierCoordinates.push(cellId);
+    })
+    this.shipPlacement('Carrier', carrierCoordinates);
+
+    let battleshipCoordinates = [];
+    battleship.forEach(battleshipCell => {
+      const cellId = Number(battleshipCell.id.split('-')[1]);
+      battleshipCoordinates.push(cellId);
+    })
+    this.shipPlacement('Battleship', battleshipCoordinates);
+
+    let cruiserCoordinates = [];
+    cruiser.forEach(cruiserCell => {
+      const cellId = Number(cruiserCell.id.split('-')[1]);
+      cruiserCoordinates.push(cellId);
+    })
+    this.shipPlacement('Cruiser', cruiserCoordinates);
+
+    let submarineCoordinates = [];
+    submarine.forEach(submarineCell => {
+      const cellId = Number(submarineCell.id.split('-')[1]);
+      submarineCoordinates.push(cellId);
+    })
+    this.shipPlacement('Submarine', submarineCoordinates);
+
+    let destroyerCoordinates = [];
+    destroyer.forEach(destroyerCell => {
+      const cellId = Number(destroyerCell.id.split('-')[1]);
+      destroyerCoordinates.push(cellId);
+    })
+    this.shipPlacement('Destroyer', destroyerCoordinates);
+  }
 }

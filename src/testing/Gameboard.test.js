@@ -104,5 +104,4 @@ describe('Gameboard tests', () => {
     expect(newBoard.receiveAttack([19])).toBe('hit and sunk');
     expect(newBoard.receiveAttack([3])).toBe('all ships have been sunk');
   })
-
 })
