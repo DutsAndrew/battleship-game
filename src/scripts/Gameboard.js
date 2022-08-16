@@ -19,6 +19,7 @@ class Gameboard {
     return newShip;
   }
   receiveAttack(attack) {
+    console.log('receiving attack');
     if (!attack) return undefined;
     if (Array.isArray(attack) === false) return undefined;
 
@@ -30,9 +31,9 @@ class Gameboard {
     // Function for checking how attack will affect the gameboard
     function checkArrayForMatch(gameBoardArray) {
       let status = false;
-      gameBoardArray.forEach(array => {
-        for (let i = 0; i < array.length; i++) {
-          if (attack.includes(array[i])) {
+      gameBoardArray.forEach(coordinate => {
+        for (let i = 0; i < coordinate.length; i++) {
+          if (attack.includes(coordinate[i])) {
             status = true;
           }
         }

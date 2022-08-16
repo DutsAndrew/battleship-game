@@ -6,22 +6,16 @@ import { Gameboard } from './Gameboard';
 
 class Player {
   constructor() {
-    this.playersTurn = false;
-    this.turnCounter = 0;
-    this.plays = [];
     this.gameBoard = new Gameboard();
     this.winStatus = false;
     this.enemyBoatsSunk = [];
   }
-  makeAMove() {
-    this.turnCounter++;
-    this.playersTurn = true;
-  }
   checkForWin() {
     if (this.enemyBoatsSunk.length === 5) {
-      return 'we have a winner, chicken dinner';
+      this.winStatus = true;
+      return this.winStatus;
     }
-    return 'no winner yet';
+    return this.winStatus;
   }
   generateComputerAttack() {
     const newAttack = Math.floor(Math.random() * 100);
