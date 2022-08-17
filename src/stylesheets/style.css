@@ -257,3 +257,15 @@ body {
   display: none;
   visibility: hidden;
 }
+
+.boat-hit {
+  background-color: red;
+}
+
+.missed-shot {
+  background-color: white;
+}
+
+.boat-sunk {
+  background-color: black;
+}

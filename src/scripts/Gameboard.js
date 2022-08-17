@@ -12,12 +12,14 @@ class Gameboard {
     this.shipYard = [];
     this.fleetCoordinates = [];
   }
+
   shipPlacement(typeOfShip, shipCoordinates) {
     const newShip = new Ship(`${typeOfShip}`, shipCoordinates);
     this.shipYard.push(newShip);
     this.fleetCoordinates.push(shipCoordinates);
     return newShip;
   }
+
   receiveAttack(attack) {
     console.log('receiving attack');
     if (!attack) return undefined;
@@ -93,6 +95,7 @@ class Gameboard {
       }
     }
   }
+
   addBoatsToBoard(player) {
     const carrier = document.querySelectorAll(`.carrier-${player}`);
     const battleship = document.querySelectorAll(`.battleship-${player}`);
@@ -135,4 +138,33 @@ class Gameboard {
     })
     this.shipPlacement('Destroyer', destroyerCoordinates);
   }
+
+  displayPlayerAttack(clickedCell, playerAttackReport, shipYard) {
+    console.log(clickedCell, playerAttackReport);
+
+    if (playerAttackReport === 'hit') {
+      const cellToMark = document.querySelector(`#computer-${clickedCell}`);
+      cellToMark.classList.add('boat-hit');
+    }
+    if (playerAttackReport === 'miss') {
+      const cellToMark = document.querySelector(`#computer-${clickedCell}`);
+      cellToMark.classList.add('missed-shot');
+    }
+    if (playerAttackReport === 'hit and sunk') {
+      shipYard.forEach(ship => {
+       const shipLength = ship.lengthOfShip;
+       shipLength.forEach(coordinate => {
+        if (coordinate.toString().includes(clickedCell.toString())) {
+          const sunkShip = ship.lengthOfShip;
+          sunkShip.forEach(sunkCoordinate => {
+            const coordinateInDOM = document.querySelector(`#computer-${sunkCoordinate}`);
+            coordinateInDOM.classList.remove('boat-hit');
+            coordinateInDOM.classList.add('boat-sunk');
+          })
+        }
+       })
+      })
+    }
+  }
+
 }

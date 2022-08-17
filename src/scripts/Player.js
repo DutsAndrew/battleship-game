@@ -19,15 +19,15 @@ class Player {
   }
   generateComputerAttack() {
     const newAttack = Math.floor(Math.random() * 100);
-    const validatedAttack = validateAttack(this.gameBoard, newAttack);
+    const validatedAttack = validateAttack(newAttack, this.gameBoard);
 
-    function validateAttack(gameBoard, attack) {
+    function validateAttack(attack, currentGameBoard) {
       let attackUnderReview = attack;
 
-      const attackStatus = gameBoard.receiveAttack(attackUnderReview);
+      const attackStatus = currentGameBoard.receiveAttack([attackUnderReview]);
       while (attackStatus === 'move has already been made') {
         const tryNewAttack = Math.floor(Math.random() * 100);
-        const newAttackStatus = this.gameBoard.receiveAttack(tryNewAttack);
+        const newAttackStatus = currentGameBoard.receiveAttack([tryNewAttack]);
         if (newAttackStatus !== 'move has already been made') {
           attackUnderReview = tryNewAttack;
           break;
@@ -35,7 +35,6 @@ class Player {
       }
       return attackUnderReview;
     }
-
     return validatedAttack;
   }
 }
