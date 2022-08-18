@@ -21,7 +21,6 @@ class Gameboard {
   }
 
   receiveAttack(attack) {
-    console.log('receiving attack');
     if (!attack) return undefined;
     if (Array.isArray(attack) === false) return undefined;
 
@@ -140,8 +139,6 @@ class Gameboard {
   }
 
   displayAttack(attackedCell, attackStatus, shipYard, whoReceivesAttack) {
-    console.log(attackedCell, attackStatus);
-
     if (attackStatus === 'hit') {
       const cellToMark = document.querySelector(`#${whoReceivesAttack}-${attackedCell}`);
       cellToMark.classList.add('boat-hit');
