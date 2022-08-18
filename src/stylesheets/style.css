@@ -1,3 +1,7 @@
+html {
+  background-color: #D62839;
+}
+
 body {
   background-color: #FFEAEE;
 }
@@ -12,20 +16,20 @@ body {
   margin: 0;
   height: 17vh;
   width: 100vw;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: #4BA3C3;
 }
 
 #battleship-logo {
-  background-color: white;
-  width: 5vw;
+  filter: invert(26%) sepia(63%) saturate(1934%) hue-rotate(320deg) brightness(87%) contrast(90%);
+  width: 8vw;
   height: 8vh;
-  margin-left: 1%;
+  margin: 0;
+  margin-bottom: 4%;
 }
 
 #menu {
-  background-color: pink;
   width: 20vw;
   height: 15vh;
   display: flex;
@@ -35,22 +39,22 @@ body {
 }
 
 #website-title {
-  background-color: green;
+  color: #BA324F;
   height: 10vh;
-  width: 20vw;
+  width: 30vw;
   margin: 0;
-  font-size: 4.72em;
+  font-size: 4.5em;
 }
 
 #menu-button-container {
   display: flex;
   flex-flow: row nowrap;
   height: 5vh;
-  width: 20vw;
+  width: 18vw;
 }
 
 #start-game {
-  background-color: orange;
+  background-color: #CCE6F4;
   height: 5vh;
   width: 20vw;
   margin: 0;
@@ -58,18 +62,11 @@ body {
 }
 
 #reset-game {
-  background-color: cyan;
+  background-color: #CCE6F4;
   height: 5vh;
   width: 20vw;
   margin: 0;
   font-size: 1.25em;
-}
-
-#wins-tracker {
-  background-color: purple;
-  width: 5vw;
-  height: 10vh;
-  margin-right: 1%;
 }
 
 #main-document {
@@ -78,7 +75,7 @@ body {
   margin: 0;
   width: 100vw;
   height: 83vh;
-  background-color: burlywood;
+  background-color: #D62839;
   justify-content: center;
   align-items: center;
 }
@@ -91,17 +88,17 @@ body {
   margin: 0;
   width: 90vw;
   height: 70vh;
-  background-color: aquamarine;
+  background-color: #175676;
 }
 
 #player-one-container, #computer-container {
   width: 40vw;
   height: 60vh;
-  background-color: chocolate;
+  background-color: #4BA3C3;
 }
 
 #player-one-title, #computer-title {
-  background-color: aquamarine;
+  background-color: #175676;
   width: 40vw;
   height: 7vh;
   margin: 0;
@@ -121,7 +118,7 @@ body {
 
 .game-board-row{
   margin: 0;
-  background-color: pink;
+  background-color: #4BA3C3;
   flex: 1 1 100%;
   display: flex;
   flex-direction: row;
@@ -167,11 +164,11 @@ body {
 #boat-container {
   width: 40vw;
   height: 60vh;
-  background-color: #096B72;
+  background-color: #4BA3C3;
 }
 
 #label-for-placing-boat {
-  background-color: aquamarine;
+  background-color: #175676;
   width: 40vw;
   height: 7vh;
   margin: 0;
@@ -188,7 +185,7 @@ body {
 }
 
 .player-boat {
-  background-color: black;
+  background-color: #CCE6F4;
   cursor: move;
 }
 
@@ -201,7 +198,8 @@ body {
   width: 10vw;
   height: 5vh;
   font-size: 1em;
-  border: 3px solid red;
+  background-color: #CCE6F4;
+  border: 3px solid #D62839;
 }
 
 .display-y-axis {
@@ -259,13 +257,13 @@ body {
 }
 
 .boat-hit {
-  background-color: red;
+  background-color: #BA324F;
 }
 
 .missed-shot {
-  background-color: white;
+  background-color: #CCE6F4;
 }
 
 .boat-sunk {
-  background-color: black;
+  background-color: #D62839;
 }
