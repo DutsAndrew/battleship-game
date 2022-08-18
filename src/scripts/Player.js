@@ -10,6 +10,7 @@ class Player {
     this.winStatus = false;
     this.enemyBoatsSunk = [];
   }
+
   checkForWin() {
     if (this.enemyBoatsSunk.length === 5) {
       this.winStatus = true;
@@ -17,24 +18,31 @@ class Player {
     }
     return this.winStatus;
   }
-  generateComputerAttack() {
-    const newAttack = Math.floor(Math.random() * 100);
-    const validatedAttack = validateAttack(newAttack, this.gameBoard);
 
-    function validateAttack(attack, currentGameBoard) {
-      let attackUnderReview = attack;
+  generateComputerAttack(playerGameBoard) {
+    let newAttack = Math.floor(Math.random() * 100);
+    let attackStatus;
+    validateAttack(newAttack, playerGameBoard);
 
-      const attackStatus = currentGameBoard.receiveAttack([attackUnderReview]);
+    function validateAttack(attack, playerGameBoard) {
+      attackStatus = playerGameBoard.receiveAttack([attack]);
       while (attackStatus === 'move has already been made') {
-        const tryNewAttack = Math.floor(Math.random() * 100);
-        const newAttackStatus = currentGameBoard.receiveAttack([tryNewAttack]);
-        if (newAttackStatus !== 'move has already been made') {
-          attackUnderReview = tryNewAttack;
+        let tryNewAttack = Math.floor(Math.random() * 100);
+        attackStatus = playerGameBoard.receiveAttack([tryNewAttack]);
+        if (attackStatus !== 'move has already been made') {
+          newAttack = tryNewAttack;
           break;
         }
       }
-      return attackUnderReview;
+      return {
+        newAttack,
+        attackStatus
+      }
     }
-    return validatedAttack;
+    return { 
+      newAttack,
+      attackStatus
+    }
   }
+
 }

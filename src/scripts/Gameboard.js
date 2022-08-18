@@ -139,25 +139,25 @@ class Gameboard {
     this.shipPlacement('Destroyer', destroyerCoordinates);
   }
 
-  displayPlayerAttack(clickedCell, playerAttackReport, shipYard) {
-    console.log(clickedCell, playerAttackReport);
+  displayAttack(attackedCell, attackStatus, shipYard, whoReceivesAttack) {
+    console.log(attackedCell, attackStatus);
 
-    if (playerAttackReport === 'hit') {
-      const cellToMark = document.querySelector(`#computer-${clickedCell}`);
+    if (attackStatus === 'hit') {
+      const cellToMark = document.querySelector(`#${whoReceivesAttack}-${attackedCell}`);
       cellToMark.classList.add('boat-hit');
     }
-    if (playerAttackReport === 'miss') {
-      const cellToMark = document.querySelector(`#computer-${clickedCell}`);
+    if (attackStatus === 'miss') {
+      const cellToMark = document.querySelector(`#${whoReceivesAttack}-${attackedCell}`);
       cellToMark.classList.add('missed-shot');
     }
-    if (playerAttackReport === 'hit and sunk') {
+    if (attackStatus === 'hit and sunk') {
       shipYard.forEach(ship => {
        const shipLength = ship.lengthOfShip;
        shipLength.forEach(coordinate => {
-        if (coordinate.toString().includes(clickedCell.toString())) {
+        if (coordinate.toString().includes(attackedCell.toString())) {
           const sunkShip = ship.lengthOfShip;
           sunkShip.forEach(sunkCoordinate => {
-            const coordinateInDOM = document.querySelector(`#computer-${sunkCoordinate}`);
+            const coordinateInDOM = document.querySelector(`#${whoReceivesAttack}-${sunkCoordinate}`);
             coordinateInDOM.classList.remove('boat-hit');
             coordinateInDOM.classList.add('boat-sunk');
           })

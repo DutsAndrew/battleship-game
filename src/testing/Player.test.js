@@ -19,9 +19,4 @@ describe('Player tests', () => {
     expect(playerOne.checkForWin()).toBe(false);
     expect(playerTwo.checkForWin()).toBe(true);
   })
-
-  it('computer can generate an attack and validate it', () => {
-    expect(playerOne.generateComputerAttack()).toBeGreaterThan(0);
-    expect(playerOne.generateComputerAttack()).toBeLessThan(100);
-  })
 })
