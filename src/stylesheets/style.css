@@ -50,23 +50,23 @@ body {
   display: flex;
   flex-flow: row nowrap;
   height: 5vh;
-  width: 15vw;
+  width: 25vw;
 }
 
 #start-game {
   background-color: #CCE6F4;
   height: 5vh;
-  width: 20vw;
+  width: 25vw;
   margin: 0;
-  font-size: 1.25em;
+  font-size: 1em;
 }
 
 #reset-game {
   background-color: #CCE6F4;
   height: 5vh;
-  width: 20vw;
+  width: 25vw;
   margin: 0;
-  font-size: 1.25em;
+  font-size: 1em;
 }
 
 #main-document {
